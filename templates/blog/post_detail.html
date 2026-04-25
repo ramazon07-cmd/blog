@@ -64,11 +64,11 @@
     <!-- Author Actions -->
     {% if user == post.author %}
     <div class="flex gap-4 mt-12 pt-12 border-t border-white/5">
-        <a href="{% url 'blog:post_update' slug=post.slug %}" class="px-6 py-3 bg-white/5 border border-white/10 text-on-surface rounded-full hover:bg-white/10 transition-all flex items-center gap-2">
+        <a href="{% url 'blog:post_update' post.slug %}" class="px-6 py-3 bg-white/5 border border-white/10 text-on-surface rounded-full hover:bg-white/10 transition-all flex items-center gap-2">
             <span class="material-symbols-outlined text-sm">edit</span>
             Edit
         </a>
-        <a href="{% url 'blog:post_delete' slug=post.slug %}" class="px-6 py-3 bg-error/20 border border-error/30 text-error rounded-full hover:bg-error/30 transition-all flex items-center gap-2">
+        <a href="{% url 'blog:post_delete' post.slug %}" class="px-6 py-3 bg-error/20 border border-error/30 text-error rounded-full hover:bg-error/30 transition-all flex items-center gap-2">
             <span class="material-symbols-outlined text-sm">delete</span>
             Delete
         </a>

@@ -23,9 +23,12 @@
             {% csrf_token %}
             <button type="submit" class="text-zinc-400 hover:text-white transition-colors text-sm">Logout</button>
         </form>
-        <div class="w-10 h-10 rounded-full overflow-hidden border border-white/20">
-            <div class="w-full h-full bg-surface-container-highest flex items-center justify-center text-sm text-on-surface-variant">
-                {{ user.username|slice:":1"|upper }}
+        <div class="flex items-center gap-3">
+            <span class="text-sm text-zinc-400">{{ user.username }}</span>
+            <div class="w-10 h-10 rounded-full overflow-hidden border border-white/20">
+                <div class="w-full h-full bg-surface-container-highest flex items-center justify-center text-sm text-on-surface-variant">
+                    {{ user.username|slice:":1"|upper }}
+                </div>
             </div>
         </div>
     {% else %}
