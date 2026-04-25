@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(django-admin startproject:*)",
+      "Bash(python3 manage.py startapp blog)",
+      "Bash(python3 manage.py makemigrations blog)",
+      "Bash(python3 manage.py migrate)",
+      "Bash(python3:*)",
+      "Bash(python:*)",
+      "Bash(./venv/bin/python manage.py test blog.tests --verbosity=2)",
+      "Bash(./venv/bin/python *)",
+      "Bash(./venv/bin/pip install *)",
+      "Bash(mkdir -p /Users/macbookair/Documents/coding/draftly/templates_2/django/editorial/templates/editorial)",
+      "Bash(mkdir -p /Users/macbookair/Documents/coding/draftly/templates_2/django/static/css)",
+      "Bash(mkdir -p /Users/macbookair/Documents/coding/draftly/templates_2/django/static/js)",
+      "Bash(cp /Users/macbookair/Documents/coding/draftly/templates_2/css/*.css /Users/macbookair/Documents/coding/draftly/templates_2/django/static/css/)",
+      "Bash(cp /Users/macbookair/Documents/coding/draftly/templates_2/js/*.js /Users/macbookair/Documents/coding/draftly/templates_2/django/static/js/)",
+      "Bash(venv/bin/python manage.py check)",
+      "Bash(venv/bin/python manage.py test blog.tests --verbosity=2)",
+      "Bash(venv/bin/python *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:8000/)",
+      "Bash(curl -s -w \"\\\\n\\\\nHTTP Status: %{http_code}\\\\n\" http://127.0.0.1:8000/)",
+      "Bash(curl -s -w \"\\\\n\\\\nHTTP Status: %{http_code}\\\\n\" http://127.0.0.1:8000/register/)",
+      "Bash(curl -s -w \"\\\\n\\\\nHTTP Status: %{http_code}\\\\n\" http://127.0.0.1:8000/accounts/login/)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:8000/post/najot-team/)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:8000/post/test-fix-post/)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:8000/post/najot-team/edit/)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:8000/post/new/)",
+      "Bash(curl *)",
+      "Bash(git remote *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git branch *)",
+      "Bash(git push *)"
+    ]
+  }
+}
