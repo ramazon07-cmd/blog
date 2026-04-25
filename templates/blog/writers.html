@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load blog_extras %}
+
+{% block title %}Writers | Draftly{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/v2/writers.css' %}">
+{% endblock %}
+
+{% block navbar %}{% include "components/navbar.html" %}{% endblock %}
+
+{% block content %}
+<main class="pt-32 pb-24 px-gutter max-w-container-max mx-auto">
+    <!-- Hero Section -->
+    <section class="mb-20 text-center">
+        <h1 class="font-display-xl text-display-xl text-white mb-6">The Minds Behind the Words</h1>
+        <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">
+            Our editorial team brings together Pulitzer-winning journalists, cultural critics, and industry visionaries to redefine contemporary discourse.
+        </p>
+    </section>
+
+    <!-- Writers Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
+        {% for writer in writers %}
+        <article class="glass-card rounded-3xl p-8 flex flex-col md:flex-row gap-8">
+            <div class="flex-shrink-0">
+                <div class="relative w-48 h-64 rounded-2xl overflow-hidden shadow-2xl">
+                    {% if writer.userprofile.avatar %}
+                        <img class="w-full h-full object-cover" src="{{ writer.userprofile.avatar.url }}" alt="{{ writer.username }}">
+                    {% else %}
+                        <div class="w-full h-full bg-surface-container-highest flex items-center justify-center text-4xl text-primary font-bold">
+                            {{ writer.username|slice:":1"|upper }}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="flex justify-center gap-4 mt-6">
+                    <span class="material-symbols-outlined text-primary hover:text-white cursor-pointer transition-colors">share</span>
+                    <span class="material-symbols-outlined text-primary hover:text-white cursor-pointer transition-colors">alternate_email</span>
+                    <span class="material-symbols-outlined text-primary hover:text-white cursor-pointer transition-colors">work</span>
+                </div>
+            </div>
+            <div class="flex flex-col">
+                <div class="mb-4">
+                    <h2 class="font-headline-md text-headline-md text-white">{{ writer.username }}</h2>
+                    {% if writer.userprofile.role %}
+                    <p class="font-label-sm text-label-sm text-primary uppercase tracking-widest mt-1">{{ writer.userprofile.role }}</p>
+                    {% endif %}
+                </div>
+                {% if writer.userprofile.bio %}
+                <p class="font-body-md text-body-md text-on-surface-variant mb-6 leading-relaxed">
+                    {{ writer.userprofile.bio }}
+                </p>
+                {% endif %}
+                <div class="mt-auto">
+                    <h3 class="font-label-sm text-label-sm text-on-surface mb-3 border-b border-white/5 pb-2">FEATURED ARTICLES</h3>
+                    <ul class="space-y-2">
+                        {% for post in posts %}
+                            {% if post.author == writer %}
+                            <li class="group flex items-center gap-2 cursor-pointer">
+                                <span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                                <a href="{{ post.get_absolute_url }}" class="font-body-md text-sm text-zinc-400 group-hover:text-primary transition-colors">{{ post.title }}</a>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </article>
+        {% empty %}
+        <div class="md:col-span-12 glass-card rounded-xl p-12 text-center">
+            <p class="text-on-surface-variant text-xl mb-4">No writers yet.</p>
+        </div>
+        {% endfor %}
+    </div>
+</main>
+{% endblock %}

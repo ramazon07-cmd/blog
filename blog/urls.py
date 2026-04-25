@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (
     HomeView, PostListView, PostDetailView, PostCreateView, PostUpdateView,
     PostDeleteView, RegisterView, add_comment, CategoryPostsView, SearchView,
-    UserDashboardView
+    UserDashboardView, WritersView
 )
 
 app_name = 'blog'
@@ -10,6 +10,7 @@ app_name = 'blog'
 urlpatterns = [
     path('', HomeView.as_view(), name='home'),
     path('posts/', PostListView.as_view(), name='post_list'),
+    path('writers/', WritersView.as_view(), name='writers'),
     path('dashboard/', UserDashboardView.as_view(), name='dashboard'),
     path('post/new/', PostCreateView.as_view(), name='post_create'),
     path('post/<slug:slug>/', PostDetailView.as_view(), name='post_detail'),

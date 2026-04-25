@@ -78,7 +78,7 @@
             </div>
 
             <!-- Metadata Row -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                 <!-- Category -->
                 <div>
                     <label for="{{ form.category.id_for_label }}" class="block text-label-sm text-label-sm text-zinc-400 mb-2 uppercase tracking-widest">Category</label>
@@ -96,11 +96,17 @@
                     {{ form.tags }}
                 </div>
 
+                <!-- Status -->
+                <div>
+                    <label for="{{ form.status.id_for_label }}" class="block text-label-sm text-zinc-400 mb-2 uppercase tracking-widest">Status</label>
+                    {{ form.status }}
+                </div>
+
                 <!-- Featured -->
                 <div class="flex items-center gap-3 pt-6">
                     <label class="flex items-center gap-3 cursor-pointer">
                         {{ form.is_featured }}
-                        <span class="text-label-sm text-label-sm text-zinc-400 uppercase tracking-widest">Featured Post</span>
+                        <span class="text-label-sm text-label-sm text-zinc-400 uppercase tracking-widest">Featured</span>
                     </label>
                 </div>
             </div>

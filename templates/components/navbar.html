@@ -5,6 +5,7 @@
 <!-- Desktop Nav -->
 <div class="hidden md:flex items-center gap-8">
     <a class="text-zinc-400 font-medium hover:text-white hover:scale-105 transition-all duration-300 ease-[spring(300,20)]" href="{% url 'blog:post_list' %}">Browse</a>
+    <a class="text-zinc-400 font-medium hover:text-white hover:scale-105 transition-all duration-300 ease-[spring(300,20)]" href="{% url 'blog:writers' %}">Writers</a>
     {% if user.is_authenticated %}
         <a class="text-zinc-400 font-medium hover:text-white hover:scale-105 transition-all duration-300 ease-[spring(300,20)]" href="{% url 'blog:dashboard' %}">Dashboard</a>
     {% endif %}
@@ -53,6 +54,7 @@
         </div>
     </form>
     <a class="block text-zinc-400 font-medium hover:text-white transition-colors py-2" href="{% url 'blog:post_list' %}">Browse</a>
+    <a class="block text-zinc-400 font-medium hover:text-white transition-colors py-2" href="{% url 'blog:writers' %}">Writers</a>
     {% if user.is_authenticated %}
         <a class="block text-zinc-400 font-medium hover:text-white transition-colors py-2" href="{% url 'blog:dashboard' %}">Dashboard</a>
         <a class="block text-zinc-400 font-medium hover:text-white transition-colors py-2" href="{% url 'blog:post_create' %}">Write</a>
