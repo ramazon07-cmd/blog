@@ -1,0 +1,6 @@
+asgiref==3.11.1
+Django==5.2.11
+django-ratelimit==4.1.0
+pillow==12.2.0
+python-dotenv==1.2.2
+sqlparse==0.5.5

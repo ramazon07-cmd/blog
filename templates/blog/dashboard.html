@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load blog_extras %}
+
+{% block title %}Dashboard | Draftly{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/v2/dashboard.css' %}">
+{% endblock %}
+
+{% block navbar %}{% include "components/navbar.html" %}{% endblock %}
+
+{% block content %}
+<main class="pt-32 pb-24 px-gutter max-w-container-max mx-auto">
+    <!-- Dashboard Header -->
+    <div class="mb-12">
+        <h1 class="font-headline-lg text-headline-lg text-white mb-2">Your Dashboard</h1>
+        <p class="text-zinc-400 font-body-md">Manage your stories and drafts</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div class="glass-card rounded-xl p-6">
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-zinc-400 font-label-sm text-label-sm uppercase tracking-widest">Total Posts</span>
+                <span class="material-symbols-outlined text-primary text-xl">article</span>
+            </div>
+            <span class="text-4xl font-bold text-white">{{ posts|length }}</span>
+        </div>
+        <div class="glass-card rounded-xl p-6">
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-zinc-400 font-label-sm text-label-sm uppercase tracking-widest">Published</span>
+                <span class="material-symbols-outlined text-tertiary text-xl">public</span>
+            </div>
+            <span class="text-4xl font-bold text-white">{{ published_count }}</span>
+        </div>
+        <div class="glass-card rounded-xl p-6">
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-zinc-400 font-label-sm text-label-sm uppercase tracking-widest">Drafts</span>
+                <span class="material-symbols-outlined text-zinc-500 text-xl">edit_note</span>
+            </div>
+            <span class="text-4xl font-bold text-white">{{ drafts_count }}</span>
+        </div>
+    </div>
+
+    <!-- Posts Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+        {% for post in posts %}
+        <article class="md:col-span-4 glass-card rounded-xl overflow-hidden group hover:-translate-y-1 transition-all duration-300">
+            <div class="aspect-video overflow-hidden relative">
+                <a href="{{ post.get_absolute_url }}">
+                {% if post.image %}
+                    <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="{{ post.image.url }}" alt="{{ post.title }}">
+                {% else %}
+                    <div class="w-full h-full bg-surface-container-highest"></div>
+                {% endif %}
+                </a>
+                <div class="absolute top-3 right-3">
+                    {% if post.status == 'draft' %}
+                    <span class="px-3 py-1 bg-zinc-800/80 text-zinc-300 text-[10px] font-label-sm uppercase tracking-widest rounded-full backdrop-blur-sm">Draft</span>
+                    {% else %}
+                    <span class="px-3 py-1 bg-primary/80 text-on-primary text-[10px] font-label-sm uppercase tracking-widest rounded-full backdrop-blur-sm">Published</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="p-6">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-8 h-8 rounded-full bg-surface-container-highest overflow-hidden flex items-center justify-center text-xs text-zinc-400">
+                        {{ post.author.username|slice:":1"|upper }}
+                    </div>
+                    <span class="text-zinc-400 font-label-sm text-label-sm">{{ post.author.username|upper }}</span>
+                    <span class="w-1 h-1 bg-zinc-700 rounded-full mx-1"></span>
+                    <span class="text-zinc-500 font-label-sm text-label-sm">{{ post.read_time|default:1 }} MIN READ</span>
+                </div>
+                <h3 class="font-headline-md text-headline-md text-white mb-3 group-hover:text-primary transition-colors"><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+                {% if post.subtitle %}
+                <p class="font-body-md text-zinc-400 line-clamp-2 mb-4">{{ post.subtitle }}</p>
+                {% else %}
+                <p class="font-body-md text-zinc-400 line-clamp-3 mb-6">{{ post.content|truncatewords:20 }}</p>
+                {% endif %}
+                <div class="pt-4 border-t border-white/5 flex justify-between items-center">
+                    <div class="flex items-center gap-4 text-zinc-500 text-[12px]">
+                        <span>{{ post.created_at|date:"M d, Y" }}</span>
+                        <span class="px-2 py-1 bg-white/5 rounded">{{ post.category.name|upper|default:"ARTICLE" }}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <a href="{% url 'blog:post_update' post.slug %}" class="p-2 text-zinc-500 hover:text-primary transition-colors" title="Edit">
+                            <span class="material-symbols-outlined text-lg">edit</span>
+                        </a>
+                        <a href="{% url 'blog:post_delete' post.slug %}" class="p-2 text-zinc-500 hover:text-red-500 transition-colors" title="Delete">
+                            <span class="material-symbols-outlined text-lg">delete</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </article>
+        {% empty %}
+        <div class="md:col-span-12 glass-card rounded-xl p-12 text-center">
+            <p class="text-on-surface-variant text-xl mb-4">You haven't written anything yet.</p>
+            <a href="{% url 'blog:post_create' %}" class="text-primary hover:text-tertiary transition-colors">Start writing your first story!</a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+        <div class="mt-16 flex justify-center">
+            <div class="flex gap-4">
+                {% if page_obj.has_previous %}
+                    <a href="{% url 'blog:dashboard' %}?page=1" class="px-6 py-3 bg-primary text-on-primary rounded-full hover:opacity-90 transition-all">First</a>
+                    <a href="{% url 'blog:dashboard' %}?page={{ page_obj.previous_page_number }}" class="px-6 py-3 bg-white/5 border border-white/10 text-on-surface rounded-full hover:bg-white/10 transition-all">Previous</a>
+                {% endif %}
+                <span class="px-6 py-3 text-on-surface-variant">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                {% if page_obj.has_next %}
+                    <a href="{% url 'blog:dashboard' %}?page={{ page_obj.next_page_number }}" class="px-6 py-3 bg-white/5 border border-white/10 text-on-surface rounded-full hover:bg-white/10 transition-all">Next</a>
+                    <a href="{% url 'blog:dashboard' %}?page={{ page_obj.paginator.num_pages }}" class="px-6 py-3 bg-primary text-on-primary rounded-full hover:opacity-90 transition-all">Last</a>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+</main>
+{% endblock %}

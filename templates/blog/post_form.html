@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if form.instance.pk %}Edit{% else %}New{% endif %} Story | Draftly{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/v2/new_post.css' %}">
+{% endblock %}
+
+{% block navbar %}{% include "components/navbar.html" %}{% endblock %}
+
+{% block main_class %}pt-24 pb-20 px-8 max-w-[1280px] mx-auto{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-8">
+    <!-- Sidebar -->
+    <aside class="hidden lg:flex flex-col h-[calc(100vh-120px)] sticky top-24 bg-surface-container-low/50 backdrop-blur-lg border border-white/5 rounded-2xl p-4 space-y-2 font-inter text-sm">
+        <div class="mb-4 px-2">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-sm text-primary font-bold">
+                    {{ user.username|slice:":1"|upper }}
+                </div>
+                <div>
+                    <div class="text-primary font-bold">Workspace</div>
+                    <div class="text-zinc-500 text-[10px] uppercase tracking-widest">Premium Plan</div>
+                </div>
+            </div>
+            <a href="{% url 'blog:post_create' %}" class="w-full bg-white/10 text-primary py-2 rounded-lg font-medium hover:bg-white/15 transition-all flex items-center justify-center gap-2 mt-4">
+                <span class="material-symbols-outlined text-sm">add</span>
+                New Post
+            </a>
+        </div>
+        <div class="space-y-1">
+            <a class="flex items-center gap-3 px-3 py-2 text-zinc-400 hover:bg-white/5 hover:text-zinc-200 transition-all rounded-lg" href="{% url 'blog:dashboard' %}">
+                <span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2 text-zinc-400 hover:bg-white/5 hover:text-zinc-200 transition-all rounded-lg" href="{% url 'blog:post_create' %}">
+                <span class="material-symbols-outlined">add</span>
+                New Post
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Editor Area -->
+    <section class="max-w-reading-width mx-auto w-full">
+        <!-- Breadcrumbs -->
+        <div class="flex items-center gap-2 text-zinc-500 text-xs font-label-sm uppercase tracking-widest mb-12">
+            <a class="hover:text-primary transition-colors" href="{% url 'blog:post_list' %}">All Posts</a>
+            <span class="material-symbols-outlined text-[12px]">chevron_right</span>
+            <span class="text-zinc-300">{% if form.instance.pk %}Edit Story{% else %}New Story{% endif %}</span>
+        </div>
+
+        <!-- Writing Canvas -->
+        <form id="post-form" method="POST" enctype="multipart/form-data" class="relative group">
+            {% csrf_token %}
+
+            <!-- Cover Image -->
+            <div class="relative w-full aspect-[21/9] rounded-2xl overflow-hidden mb-12 bg-surface-container-high border border-white/5 group/cover">
+                {% if form.instance.image %}
+                    <img class="absolute inset-0 w-full h-full object-cover" src="{{ form.instance.image.url }}" alt="Cover">
+                {% endif %}
+                <label for="{{ form.image.id_for_label }}" class="absolute inset-0 flex flex-col items-center justify-center text-zinc-500 gap-3 group-hover/cover:bg-white/5 transition-colors cursor-pointer">
+                    <span class="material-symbols-outlined text-4xl">add_photo_alternate</span>
+                    <span class="font-label-sm uppercase tracking-widest text-[10px]">Add a cover image</span>
+                </label>
+                {{ form.image }}
+            </div>
+
+            <!-- Title -->
+            <div class="mb-6">
+                {{ form.title }}
+            </div>
+
+            <!-- Subtitle -->
+            <div class="mb-6">
+                {{ form.subtitle }}
+            </div>
+
+            <!-- Metadata Row -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <!-- Category -->
+                <div>
+                    <label for="{{ form.category.id_for_label }}" class="block text-label-sm text-label-sm text-zinc-400 mb-2 uppercase tracking-widest">Category</label>
+                    <div class="flex items-center gap-2">
+                        {{ form.category }}
+                        <a href="{% url 'admin:blog_category_add' %}" target="_blank" class="text-primary hover:text-white transition-colors text-sm" title="Add new category">
+                            <span class="material-symbols-outlined text-xl">add</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Tags -->
+                <div>
+                    <label for="{{ form.tags.id_for_label }}" class="block text-label-sm text-label-sm text-zinc-400 mb-2 uppercase tracking-widest">Tags</label>
+                    {{ form.tags }}
+                </div>
+
+                <!-- Featured -->
+                <div class="flex items-center gap-3 pt-6">
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        {{ form.is_featured }}
+                        <span class="text-label-sm text-label-sm text-zinc-400 uppercase tracking-widest">Featured Post</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="prose prose-invert prose-lg max-w-none">
+                {{ form.content }}
+            </div>
+        </form>
+    </section>
+</div>
+{% endblock %}
+
+{% block footer %}
+<!-- Contextual Footer -->
+<footer class="fixed bottom-0 w-full bg-surface-container-low/80 backdrop-blur-xl border-t border-white/5 py-4 px-8 z-50">
+    <div class="max-w-[1280px] mx-auto flex justify-between items-center">
+        <div class="flex items-center gap-6 text-zinc-400 font-label-sm text-[10px] uppercase tracking-widest">
+            <span class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-tertiary"></span>
+                Autosave enabled
+            </span>
+        </div>
+        <div class="flex items-center gap-3">
+            <a href="{% url 'blog:post_list' %}" class="px-4 py-2 text-zinc-400 font-label-sm uppercase tracking-widest text-[11px] hover:text-white transition-colors">
+                Cancel
+            </a>
+            <button type="submit" form="post-form" class="px-8 py-2 bg-primary text-on-primary rounded-full font-bold shadow-lg shadow-primary/10 hover:scale-[1.05] transition-all flex items-center gap-2">
+                Publish
+                <span class="material-symbols-outlined text-[18px]">rocket_launch</span>
+            </button>
+        </div>
+    </div>
+</footer>
+{% endblock %}

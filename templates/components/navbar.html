@@ -1,0 +1,66 @@
+<nav class="fixed top-0 z-50 w-full bg-zinc-950/80 backdrop-blur-2xl border-b border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.36)]">
+<div class="flex justify-between items-center px-8 py-5 w-full max-w-7xl mx-auto font-sans tracking-tight antialiased">
+<a href="{% url 'blog:home' %}" class="text-2xl font-black tracking-tighter text-white uppercase">Draft<span class="text-primary">ly</span></a>
+
+<!-- Desktop Nav -->
+<div class="hidden md:flex items-center gap-8">
+    <a class="text-zinc-400 font-medium hover:text-white hover:scale-105 transition-all duration-300 ease-[spring(300,20)]" href="{% url 'blog:post_list' %}">Browse</a>
+    {% if user.is_authenticated %}
+        <a class="text-zinc-400 font-medium hover:text-white hover:scale-105 transition-all duration-300 ease-[spring(300,20)]" href="{% url 'blog:dashboard' %}">Dashboard</a>
+    {% endif %}
+</div>
+
+<div class="flex items-center gap-6">
+    <form action="{% url 'blog:search' %}" method="GET" class="relative group">
+        <div class="flex items-center bg-surface-container-low rounded-full px-4 py-2 border border-white/5 transition-all duration-500 ease-out focus-within:w-64 w-48 group-hover:border-primary/30">
+            <span class="material-symbols-outlined text-zinc-400 text-xl">search</span>
+            <input name="q" class="bg-transparent border-none focus:ring-0 text-sm text-on-surface-variant w-full placeholder:text-zinc-600" placeholder="Search insights..." type="text" value="{{ request.GET.q|default:'' }}">
+        </div>
+    </form>
+    {% if user.is_authenticated %}
+        <a href="{% url 'blog:post_create' %}" class="text-primary font-semibold hover:text-white transition-colors">Write</a>
+        <form action="{% url 'logout' %}" method="POST" class="inline">
+            {% csrf_token %}
+            <button type="submit" class="text-zinc-400 hover:text-white transition-colors text-sm">Logout</button>
+        </form>
+        <div class="w-10 h-10 rounded-full overflow-hidden border border-white/20">
+            <div class="w-full h-full bg-surface-container-highest flex items-center justify-center text-sm text-on-surface-variant">
+                {{ user.username|slice:":1"|upper }}
+            </div>
+        </div>
+    {% else %}
+        <a class="text-zinc-400 hover:text-white transition-colors" href="{% url 'login' %}">Login</a>
+        <a class="bg-primary text-on-primary px-5 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition-all" href="{% url 'blog:register' %}">Join</a>
+    {% endif %}
+</div>
+
+<!-- Mobile Menu Button -->
+<button id="mobile-menu-btn" class="md:hidden text-zinc-400 hover:text-white transition-colors p-2" aria-label="Toggle menu">
+    <span class="material-symbols-outlined text-2xl" id="menu-icon">menu</span>
+</button>
+</div>
+
+<!-- Mobile Menu -->
+<div id="mobile-menu" class="hidden md:hidden bg-zinc-950/95 backdrop-blur-xl border-t border-white/10">
+<div class="px-8 py-6 space-y-4">
+    <form action="{% url 'blog:search' %}" method="GET" class="relative group mb-6">
+        <div class="flex items-center bg-surface-container-low rounded-full px-4 py-3 border border-white/5 w-full">
+            <span class="material-symbols-outlined text-zinc-400 text-xl">search</span>
+            <input name="q" class="bg-transparent border-none focus:ring-0 text-sm text-on-surface-variant w-full placeholder:text-zinc-600 ml-2" placeholder="Search insights..." type="text" value="{{ request.GET.q|default:'' }}">
+        </div>
+    </form>
+    <a class="block text-zinc-400 font-medium hover:text-white transition-colors py-2" href="{% url 'blog:post_list' %}">Browse</a>
+    {% if user.is_authenticated %}
+        <a class="block text-zinc-400 font-medium hover:text-white transition-colors py-2" href="{% url 'blog:dashboard' %}">Dashboard</a>
+        <a class="block text-zinc-400 font-medium hover:text-white transition-colors py-2" href="{% url 'blog:post_create' %}">Write</a>
+        <form action="{% url 'logout' %}" method="POST" class="inline">
+            {% csrf_token %}
+            <button type="submit" class="text-zinc-400 hover:text-white transition-colors text-sm py-2">Logout</button>
+        </form>
+    {% else %}
+        <a class="block text-zinc-400 font-medium hover:text-white transition-colors py-2" href="{% url 'login' %}">Login</a>
+        <a class="block bg-primary text-on-primary px-5 py-3 rounded-full text-sm font-semibold text-center" href="{% url 'blog:register' %}">Join</a>
+    {% endif %}
+</div>
+</div>
+</nav>

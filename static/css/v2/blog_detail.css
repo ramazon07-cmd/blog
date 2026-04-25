@@ -1,0 +1,11 @@
+/* Blog Detail page specific styles */
+
+body {
+    scroll-behavior: smooth;
+}
+
+.reading-progress {
+    height: 2px;
+    background: linear-gradient(90deg, #8083ff, #4edea3);
+    width: 35%;
+}

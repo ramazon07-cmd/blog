@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load blog_extras %}
+
+{% block title %}{{ post.title }} | Draftly{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/v2/blog_detail.css' %}">
+{% endblock %}
+
+{% block navbar %}{% include "components/navbar.html" %}{% endblock %}
+
+{% block main_class %}pt-20{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<header class="relative h-[600px] md:h-[819px] w-full overflow-hidden">
+    {% if post.image %}
+    <img class="absolute inset-0 w-full h-full object-cover" src="{{ post.image.url }}" alt="{{ post.title }}">
+    {% else %}
+    <div class="absolute inset-0 w-full h-full bg-surface-container-high"></div>
+    {% endif %}
+    <div class="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent"></div>
+    <div class="absolute inset-0 flex flex-col justify-end items-center pb-16 md:pb-24 px-gutter">
+        <div class="max-w-reading-width w-full">
+            <div class="flex items-center gap-4 mb-6">
+                <span class="bg-primary/10 text-primary border border-primary/20 px-3 py-1 rounded-full font-label-sm text-label-sm uppercase tracking-widest">{{ post.category.name|upper|default:"ARTICLE" }}</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-widest">{{ post.read_time|default:post.content|reading_time }} Min Read</span>
+            </div>
+            <h1 class="font-headline-lg text-headline-lg md:text-display-xl md:font-display-xl mb-6 text-white">{{ post.title }}</h1>
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-full bg-surface-container-highest overflow-hidden border-2 border-primary/30 flex items-center justify-center">
+                    <span class="text-sm text-primary font-bold">{{ post.author.username|slice:":1"|upper }}</span>
+                </div>
+                <div>
+                    <p class="font-label-sm text-label-sm text-white uppercase tracking-tighter">{{ post.author.username }}</p>
+                    <p class="text-on-surface-variant text-xs">{{ post.created_at|date:"F j, Y" }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Content Section -->
+<article class="max-w-reading-width mx-auto px-gutter py-16 md:py-24">
+    {% if post.subtitle %}
+    <p class="font-body-lg text-body-lg text-on-surface-variant mb-8 leading-relaxed border-l-4 border-primary pl-6">{{ post.subtitle }}</p>
+    {% endif %}
+
+    <div class="space-y-12">
+        <!-- Drop cap on first paragraph -->
+        <p class="font-body-lg text-body-lg text-on-surface leading-relaxed first-letter:text-7xl first-letter:font-black first-letter:mr-3 first-letter:float-left first-letter:text-primary">{{ post.content|linebreaks }}</p>
+    </div>
+
+    <!-- Tags Row -->
+    {% if post.tags %}
+    <div class="flex flex-wrap gap-3 mt-12 pt-12 border-t border-white/5">
+        {% for tag in post.tags|tag_list %}
+        <span class="px-4 py-2 glass-panel rounded-full text-label-sm font-label-sm text-on-surface-variant">{{ tag }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Author Actions -->
+    {% if user == post.author %}
+    <div class="flex gap-4 mt-12 pt-12 border-t border-white/5">
+        <a href="{% url 'blog:post_update' slug=post.slug %}" class="px-6 py-3 bg-white/5 border border-white/10 text-on-surface rounded-full hover:bg-white/10 transition-all flex items-center gap-2">
+            <span class="material-symbols-outlined text-sm">edit</span>
+            Edit
+        </a>
+        <a href="{% url 'blog:post_delete' slug=post.slug %}" class="px-6 py-3 bg-error/20 border border-error/30 text-error rounded-full hover:bg-error/30 transition-all flex items-center gap-2">
+            <span class="material-symbols-outlined text-sm">delete</span>
+            Delete
+        </a>
+    </div>
+    {% endif %}
+</article>
+
+<!-- Comments Section -->
+<section class="bg-surface-container-low/30 py-16 md:py-32 border-t border-white/5">
+    <div class="max-w-reading-width mx-auto px-gutter">
+        <div class="flex items-center justify-between mb-12 md:mb-16">
+            <h3 class="font-headline-md text-headline-md text-white">Discourse <span class="text-on-surface-variant font-light text-body-lg ml-2">({{ comments|length }})</span></h3>
+            <div class="flex items-center gap-2 text-primary font-label-sm text-label-sm uppercase tracking-widest cursor-pointer hover:opacity-80 transition-opacity">
+                <span>Newest First</span>
+                <span class="material-symbols-outlined text-sm">expand_more</span>
+            </div>
+        </div>
+
+        <!-- Comment Form -->
+        {% if user.is_authenticated %}
+        <div class="mb-12 md:mb-20">
+            <form action="{% url 'blog:add_comment' slug=post.slug %}" method="POST" class="relative group">
+                {% csrf_token %}
+                <textarea name="content" class="w-full bg-transparent border-b-2 border-white/10 py-4 focus:ring-0 focus:outline-none focus:border-primary text-body-md text-white placeholder:text-zinc-600 transition-all duration-300 resize-none" placeholder="Contribute to the dialogue..." rows="1"></textarea>
+                <div class="absolute right-0 bottom-4 opacity-0 group-focus-within:opacity-100 transition-opacity">
+                    <button type="submit" class="bg-primary text-on-primary font-label-sm text-label-sm px-6 py-2 rounded-full uppercase tracking-widest hover:scale-105 active:scale-95 transition-all">Post</button>
+                </div>
+            </form>
+        </div>
+        {% else %}
+        <div class="mb-12 md:mb-20 text-center">
+            <p class="text-on-surface-variant mb-4">Please <a href="{% url 'login' %}" class="text-primary hover:underline">login</a> to leave a comment.</p>
+        </div>
+        {% endif %}
+
+        <!-- Comment List -->
+        <div class="space-y-8 md:space-y-12" id="comments-list">
+            {% for comment in comments %}
+            <div class="flex gap-4 md:gap-6 opacity-90 hover:opacity-100 transition-opacity">
+                <div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden flex-shrink-0 flex items-center justify-center">
+                    <span class="text-xs text-primary font-bold">{{ comment.user.username|slice:":1"|upper }}</span>
+                </div>
+                <div class="flex-1">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="font-label-sm text-label-sm text-white uppercase tracking-tighter">{{ comment.user.username }}</span>
+                        <span class="text-[10px] text-zinc-500 uppercase tracking-widest">{{ comment.created_at|time_ago }}</span>
+                    </div>
+                    <p class="text-on-surface-variant text-body-md">{{ comment.content|linebreaks }}</p>
+                    <div class="flex items-center gap-4 mt-3">
+                        <button class="flex items-center gap-1 text-zinc-500 hover:text-primary transition-colors text-sm">
+                            <span class="material-symbols-outlined text-sm">thumb_up</span>
+                            <span>{{ comment.likes|default:0 }}</span>
+                        </button>
+                        <button class="flex items-center gap-1 text-zinc-500 hover:text-primary transition-colors text-sm">
+                            <span class="material-symbols-outlined text-sm">reply</span>
+                            <span>Reply</span>
+                        </button>
+                    </div>
+
+                    <!-- Replies -->
+                    {% if comment.replies.all %}
+                    <div class="space-y-6 mt-6 ml-6 border-l border-white/10 pl-6">
+                        {% for reply in comment.replies.all %}
+                        <div class="flex gap-3">
+                            <div class="w-8 h-8 rounded-full bg-surface-container-highest overflow-hidden flex-shrink-0 flex items-center justify-center">
+                                <span class="text-xs text-primary font-bold">{{ reply.user.username|slice:":1"|upper }}</span>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="font-label-sm text-label-sm text-white uppercase tracking-tighter text-xs">{{ reply.user.username }}</span>
+                                    <span class="text-[10px] text-zinc-500 uppercase tracking-widest">{{ reply.created_at|time_ago }}</span>
+                                </div>
+                                <p class="text-on-surface-variant text-body-md text-sm">{{ reply.content|linebreaks }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-center text-on-surface-variant py-8">No comments yet. Start the conversation!</p>
+            {% endfor %}
+        </div>
+
+        <!-- Load More Button -->
+        {% if comments|length > 5 %}
+        <div class="mt-12 flex justify-center">
+            <button id="load-more-comments" class="px-8 py-4 bg-white/5 border border-white/10 text-on-surface rounded-full hover:bg-white/10 hover:border-primary/30 transition-all font-label-sm text-label-sm uppercase tracking-widest">
+                Load More Thoughts
+            </button>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Dark mode toggle
+    const darkModeToggle = document.querySelector('[data-dark-mode-toggle]');
+    if (darkModeToggle) {
+        darkModeToggle.addEventListener('click', function() {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('darkMode', document.documentElement.classList.contains('dark') ? 'true' : 'false');
+        });
+    }
+
+    // Load more comments (placeholder for infinite scroll)
+    const loadMoreBtn = document.getElementById('load-more-comments');
+    if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', function() {
+            // This would typically fetch more comments via AJAX
+            // For now, show a simple alert as placeholder
+            alert('Load more comments functionality would fetch the next 5 comments here.');
+        });
+    }
+});
+</script>
+{% endblock %}

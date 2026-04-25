@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Join Draftly{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/v2/authentication.css' %}">
+{% endblock %}
+
+{% block main_class %}flex-grow flex items-center justify-center px-6 py-12 relative z-10 min-h-screen{% endblock %}
+
+{% block content %}
+<div class="max-w-md w-full">
+    <!-- Brand Identity Anchor -->
+    <div class="flex flex-col items-center mb-10">
+        <div class="w-16 h-16 bg-gradient-to-tr from-primary to-tertiary rounded-xl mb-6 shadow-lg shadow-primary/20 flex items-center justify-center">
+            <span class="material-symbols-outlined text-on-primary text-4xl" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+        </div>
+        <h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tighter uppercase mb-2">Draftly</h1>
+        <p class="font-body-md text-on-surface-variant text-center opacity-70">Elevating intellectual editorial experiences.</p>
+    </div>
+
+    <!-- Main Auth Card -->
+    <div class="glass-card rounded-[2rem] p-10 relative overflow-hidden">
+        <!-- Inner Border Catch Light -->
+        <div class="absolute inset-0 border border-white/5 rounded-[2rem] pointer-events-none"></div>
+
+        <!-- Form Section -->
+        <form method="POST" class="space-y-6">
+            {% csrf_token %}
+            {% if form.errors %}
+            <div class="px-4 py-3 bg-error-container/20 border border-error/30 rounded-xl text-error text-sm space-y-1">
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <div class="space-y-2">
+                <label class="font-label-sm text-label-sm text-on-surface-variant px-1" for="id_username">Username</label>
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline-variant text-[20px]">account_circle</span>
+                    <input class="w-full bg-surface-container-highest/30 border-white/10 rounded-xl py-4 pl-12 pr-4 text-on-surface placeholder:text-outline-variant/50 input-focus-glow transition-all duration-300 border focus:border-primary/50" id="id_username" name="username" placeholder="Username" type="text" required>
+                </div>
+            </div>
+            <div class="space-y-2">
+                <label class="font-label-sm text-label-sm text-on-surface-variant px-1" for="id_password1">Password</label>
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline-variant text-[20px]">lock_open</span>
+                    <input class="w-full bg-surface-container-highest/30 border-white/10 rounded-xl py-4 pl-12 pr-12 text-on-surface placeholder:text-outline-variant/50 input-focus-glow transition-all duration-300 border focus:border-primary/50" id="id_password1" name="password1" placeholder="••••••••" type="password" required>
+                </div>
+            </div>
+            <div class="space-y-2">
+                <label class="font-label-sm text-label-sm text-on-surface-variant px-1" for="id_password2">Confirm Password</label>
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline-variant text-[20px]">lock</span>
+                    <input class="w-full bg-surface-container-highest/30 border-white/10 rounded-xl py-4 pl-12 pr-12 text-on-surface placeholder:text-outline-variant/50 input-focus-glow transition-all duration-300 border focus:border-primary/50" id="id_password2" name="password2" placeholder="••••••••" type="password" required>
+                </div>
+            </div>
+            <div class="pt-4">
+                <button class="spring-btn w-full py-4 bg-gradient-to-b from-primary to-on-primary-fixed-variant rounded-xl text-on-primary font-headline-md text-[18px] shadow-xl shadow-primary/10 flex items-center justify-center gap-3 transition-all duration-300 group" type="submit">
+                    <span>Join Draftly</span>
+                    <span class="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                </button>
+            </div>
+        </form>
+
+        <div class="mt-10 flex items-center gap-4">
+            <div class="h-[1px] flex-grow bg-white/5"></div>
+            <span class="font-label-sm text-label-sm text-outline-variant">OR</span>
+            <div class="h-[1px] flex-grow bg-white/5"></div>
+        </div>
+
+        <div class="mt-10 text-center">
+            <p class="text-on-surface-variant">Already have an account? <a class="text-primary hover:underline" href="{% url 'login' %}">Login</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

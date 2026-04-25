@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Confirm Deletion | Draftly{% endblock %}
+
+{% block navbar %}{% include "components/navbar.html" %}{% endblock %}
+
+{% block main_class %}pt-32 flex items-center justify-center min-h-screen{% endblock %}
+
+{% block content %}
+<div class="max-w-md w-full glass-card rounded-2xl p-8 border border-white/10">
+    <div class="w-12 h-12 bg-error-container/20 text-error rounded-full flex items-center justify-center mb-6">
+        <span class="material-symbols-outlined">warning</span>
+    </div>
+    <h2 class="font-headline-md text-headline-md text-white mb-2">Delete article?</h2>
+    <p class="text-on-surface-variant mb-8">This action cannot be undone. "{{ post.title }}" will be permanently removed.</p>
+    <div class="flex gap-4">
+        <a href="{{ post.get_absolute_url }}" class="flex-1 py-3 px-4 rounded-xl border border-white/10 text-on-surface font-semibold hover:bg-white/5 transition-colors text-center">Cancel</a>
+        <form method="POST" class="flex-1">
+            {% csrf_token %}
+            <button type="submit" class="w-full py-3 px-4 rounded-xl bg-error text-on-error font-semibold hover:opacity-90 transition-opacity">Delete Permanently</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
