@@ -1,119 +1,17 @@
+{% extends 'base.html' %}
 {% load static %}
 
-<!DOCTYPE html>
-<html class="dark" lang="en">
-<head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries,typography"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<style>
-    .material-symbols-outlined {
-        font-variation-settings: 'FILL' 0, 'GRAD' 0, 'opsz' 24;
-    }
-    .glass-card {
-        background: rgba(255, 255, 255, 0.03);
-        backdrop-filter: blur(20px);
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    .noise-overlay {
-        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-        opacity: 0.02;
-        pointer-events: none;
-    }
-</style>
-<script>
-    tailwind.config = {
-        darkMode: "class",
-        theme: {
-            extend: {
-                colors: {
-                    "on-primary": "#1000a9",
-                    "surface-container-high": "#222a3d",
-                    "on-surface": "#dae2fd",
-                    "secondary-fixed-dim": "#ffafd3",
-                    "primary-fixed": "#e1e0ff",
-                    error: "#ffb4ab",
-                    "surface-tint": "#c0c1ff",
-                    primary: "#c0c1ff",
-                    "primary-fixed-dim": "#c0c1ff",
-                    "on-tertiary-container": "#000703",
-                    "inverse-on-surface": "#283044",
-                    "tertiary-container": "#00885d",
-                    "on-error": "#690005",
-                    "tertiary-fixed": "#6ffbbe",
-                    "on-tertiary-fixed-variant": "#005236",
-                    outline: "#908fa0",
-                    "inverse-primary": "#494bd6",
-                    "secondary-fixed": "#ffd8e7",
-                    background: "#0b1326",
-                    "on-surface-variant": "#c7c4d7",
-                    "surface-container-highest": "#2d3449",
-                    "on-secondary-fixed": "#3d0026",
-                    secondary: "#ffafd3",
-                    "surface-bright": "#31394d",
-                    "on-primary-fixed": "#07006c",
-                    "outline-variant": "#464554",
-                    "tertiary-fixed-dim": "#4edea3",
-                    "error-container": "#93000a",
-                    "surface-dim": "#0b1326",
-                    "secondary-container": "#85145a",
-                    "on-background": "#dae2fd",
-                    "on-secondary-fixed-variant": "#85145a",
-                    "surface-variant": "#2d3449",
-                    "surface-container": "#171f33",
-                    "on-error-container": "#ffdad6",
-                    tertiary: "#4edea3",
-                    "on-secondary": "#620040",
-                    "on-secondary-container": "#ff93c8",
-                    "inverse-surface": "#dae2fd",
-                    "on-primary-container": "#0d0096",
-                    "surface-container-low": "#131b2e",
-                    "on-tertiary-fixed": "#002113",
-                    surface: "#0b1326",
-                    "primary-container": "#8083ff",
-                    "surface-container-lowest": "#060e20",
-                    "on-tertiary": "#003824",
-                    "on-primary-fixed-variant": "#2f2ebe"
-                },
-                spacing: {
-                    "gutter": "32px",
-                    "unit": "8px",
-                    "margin-page": "64px",
-                    "reading-width": "720px",
-                    "container-max": "1280px"
-                },
-                fontFamily: {
-                    "headline-md": ["Inter"],
-                    "body-md": ["Inter"],
-                    "headline-lg": ["Inter"],
-                    "body-lg": ["Inter"],
-                    "display-xl": ["Inter"],
-                    "label-sm": ["Inter"]
-                },
-                fontSize: {
-                    "headline-md": ["32px", { lineHeight: "1.3", letterSpacing: "-0.01em", fontWeight: "600" }],
-                    "body-md": ["16px", { lineHeight: "1.6", letterSpacing: "0", fontWeight: "400" }],
-                    "headline-lg": ["48px", { lineHeight: "1.2", letterSpacing: "-0.02em", fontWeight: "700" }],
-                    "body-lg": ["20px", { lineHeight: "1.7", letterSpacing: "0", fontWeight: "400" }],
-                    "display-xl": ["72px", { lineHeight: "1.1", letterSpacing: "-0.04em", fontWeight: "800" }],
-                    "label-sm": ["12px", { lineHeight: "1", letterSpacing: "0.05em", fontWeight: "600" }]
-                }
-            }
-        }
-    }
-</script>
-<link rel="icon" href="{% static 'favicon.ico' %}">
-<link rel="stylesheet" href="{% static 'css/v2/base.css' %}">
-<title>{% block title %}Search{% endblock %}</title>
-</head>
-<body class="bg-background text-on-surface font-body-md antialiased min-h-screen">
-<div class="noise-overlay"></div>
+{% block title %}Search | Writespark{% endblock %}
 
-<!-- Navbar -->
-{% include "components/navbar.html" %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/v2/blog_list.css' %}">
+{% endblock %}
 
+{% block navbar %}{% include "components/navbar.html" %}{% endblock %}
+
+{% block content %}
 <main class="pt-32 pb-24 px-gutter max-w-container-max mx-auto">
+
     <!-- Search Header -->
     <header class="mb-12">
         <h1 class="font-display-xl text-display-xl text-on-surface mb-4">
@@ -132,17 +30,17 @@
 
     <!-- Category Filter Bar -->
     {% if all_categories %}
-    <div class="search-filters flex items-center gap-3 mb-12 overflow-x-auto pb-2">
-        <a href="?{% if query %}q={{ query }}&{% endif %}" class="filter-btn font-label-sm text-label-sm px-4 py-2 rounded-full {% if not selected_category %}bg-primary text-on-primary{% else %}bg-white/5 text-on-surface-variant hover:bg-white/10{% endif %} transition-all whitespace-nowrap">
+    <nav class="category-nav flex items-center gap-4 mb-12 overflow-x-auto pb-2">
+        <a href="?{% if query %}q={{ query }}&{% endif %}" class="cat-link font-label-sm text-label-sm px-4 py-2 rounded-full {% if not selected_category %}bg-primary text-on-primary{% else %}bg-white/5 text-on-surface-variant hover:bg-white/10{% endif %} transition-all whitespace-nowrap">
             All
         </a>
         {% for cat in all_categories %}
-        <a href="?{% if query %}q={{ query }}&{% endif %}category={{ cat.slug }}" class="filter-btn font-label-sm text-label-sm px-4 py-2 rounded-full {% if selected_category == cat.slug %}bg-primary text-on-primary{% else %}bg-white/5 text-on-surface-variant hover:bg-white/10{% endif %} transition-all whitespace-nowrap">
+        <a href="?{% if query %}q={{ query }}&{% endif %}category={{ cat.slug }}" class="cat-link font-label-sm text-label-sm px-4 py-2 rounded-full {% if selected_category == cat.slug %}bg-primary text-on-primary{% else %}bg-white/5 text-on-surface-variant hover:bg-white/10{% endif %} transition-all whitespace-nowrap">
             {{ cat.name }}
             <span class="ml-1 opacity-60">({{ cat.posts.count }})</span>
         </a>
         {% endfor %}
-    </div>
+    </nav>
     {% endif %}
 
     <!-- Search Bar -->
@@ -160,62 +58,59 @@
     </form>
 
     <!-- Results Grid -->
-    {% if posts %}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
         {% for post in posts %}
-        <article class="glass-card rounded-xl overflow-hidden group hover:-translate-y-1 transition-all duration-300">
-            <a href="{{ post.get_absolute_url }}" class="block">
-                <div class="aspect-video overflow-hidden">
+        <article class="md:col-span-4 glass-card rounded-xl overflow-hidden group hover:-translate-y-1 transition-all duration-300">
+            <div class="aspect-video overflow-hidden">
+                <a href="{{ post.get_absolute_url }}">
                     {% if post.image %}
                         <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="{{ post.image.url }}" alt="{{ post.title }}">
                     {% else %}
                         <div class="w-full h-full bg-surface-container-highest"></div>
                     {% endif %}
-                </div>
-                <div class="p-6">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-8 h-8 rounded-full bg-surface-container-highest overflow-hidden flex items-center justify-center text-xs text-zinc-400">
-                            {{ post.author.username|slice:":1"|upper }}
-                        </div>
-                        <span class="text-zinc-400 font-label-sm text-label-sm">{{ post.author.username|upper }}</span>
-                        <span class="w-1 h-1 bg-zinc-700 rounded-full mx-1"></span>
-                        <span class="text-zinc-500 font-label-sm text-label-sm">{{ post.created_at|date:"M d, Y" }}</span>
+                </a>
+            </div>
+            <div class="p-6">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-8 h-8 rounded-full bg-surface-container-highest overflow-hidden flex items-center justify-center text-xs text-zinc-400">
+                        {{ post.author.username|slice:":1"|upper }}
                     </div>
-                    <h3 class="font-headline-md text-headline-md text-white mb-3 group-hover:text-primary transition-colors">{{ post.title }}</h3>
-                    {% if post.subtitle %}
-                    <p class="font-body-md text-zinc-400 line-clamp-2 mb-4">{{ post.subtitle }}</p>
-                    {% else %}
-                    <p class="font-body-md text-zinc-400 line-clamp-3 mb-6">{{ post.content|truncatewords:20 }}</p>
-                    {% endif %}
-                    <div class="pt-4 border-t border-white/5 flex justify-between items-center text-zinc-500 text-[12px]">
-                        <span class="px-2 py-1 bg-white/5 rounded">{{ post.category.name|upper|default:"ARTICLE" }}</span>
-                        <span class="flex items-center gap-1">
-                            <span class="material-symbols-outlined text-sm">schedule</span>
-                            {{ post.read_time|default:1 }} min read
-                        </span>
-                    </div>
+                    <span class="text-zinc-400 font-label-sm text-label-sm">{{ post.author.username|upper }}</span>
+                    <span class="w-1 h-1 bg-zinc-700 rounded-full mx-1"></span>
+                    <span class="text-zinc-500 font-label-sm text-label-sm">{{ post.read_time|default:1 }} MIN READ</span>
                 </div>
-            </a>
+                <h3 class="font-headline-md text-headline-md text-white mb-3 group-hover:text-primary transition-colors">
+                    <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+                </h3>
+                {% if post.subtitle %}
+                <p class="font-body-md text-zinc-400 line-clamp-2 mb-4">{{ post.subtitle }}</p>
+                {% else %}
+                <p class="font-body-md text-zinc-400 line-clamp-3 mb-6">{{ post.content|truncatewords:20 }}</p>
+                {% endif %}
+                <div class="pt-4 border-t border-white/5 flex justify-between items-center text-zinc-500 text-[12px]">
+                    <span>{{ post.created_at|date:"M d, Y" }}</span>
+                    <span class="px-2 py-1 bg-white/5 rounded">{{ post.category.name|upper|default:"ARTICLE" }}</span>
+                </div>
+            </div>
         </article>
+        {% empty %}
+        <!-- Empty State -->
+        <div class="md:col-span-12 glass-card rounded-xl p-16 text-center">
+            <span class="material-symbols-outlined text-6xl text-zinc-600 mb-6">search_off</span>
+            <h3 class="font-headline-lg text-headline-lg text-white mb-4">No posts found</h3>
+            <p class="text-on-surface-variant mb-8">
+                {% if query %}
+                    No posts found for "{{ query }}". Try a different keyword.
+                {% else %}
+                    No posts match the selected filters.
+                {% endif %}
+            </p>
+            <a href="{% url 'blog:post_list' %}" class="text-primary hover:text-white transition-colors">
+                Browse all posts
+            </a>
+        </div>
         {% endfor %}
     </div>
-    {% else %}
-    <!-- Empty State -->
-    <div class="glass-card rounded-xl p-16 text-center">
-        <span class="material-symbols-outlined text-6xl text-zinc-600 mb-6">search_off</span>
-        <h3 class="font-headline-lg text-headline-lg text-white mb-4">No posts found</h3>
-        <p class="text-on-surface-variant mb-8">
-            {% if query %}
-                No posts found for "{{ query }}". Try a different keyword.
-            {% else %}
-                No posts match the selected filters.
-            {% endif %}
-        </p>
-        <a href="{% url 'blog:post_list' %}" class="text-primary hover:text-white transition-colors">
-            Browse all posts
-        </a>
-    </div>
-    {% endif %}
 
     <!-- Pagination -->
     {% if is_paginated %}
@@ -233,10 +128,6 @@
         </div>
     </div>
     {% endif %}
+
 </main>
-
-{% include "components/footer.html" %}
-
-<script src="{% static 'js/main.js' %}"></script>
-</body>
-</html>
+{% endblock %}
