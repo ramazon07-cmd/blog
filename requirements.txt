@@ -4,3 +4,5 @@ django-ratelimit==4.1.0
 pillow==12.2.0
 python-dotenv==1.2.2
 sqlparse==0.5.5
+psycopg2-binary==2.9.12
+dj-database-url==3.1.2
