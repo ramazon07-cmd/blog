@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django_ratelimit.decorators import ratelimit
 from django.contrib import messages
 from django.urls import reverse_lazy
+from itertools import chain
 from django.db.models import Q, Count
 from django.contrib.auth.models import User
 from .models import Post, Comment, Category
@@ -21,8 +22,26 @@ class HomeView(ListView):
     paginate_by = None
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        return queryset.filter(status='published').select_related('author', 'category')
+        return Post.objects.none()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Featured posts — up to 3, newest first
+        context['featured_posts'] = (
+            Post.objects.filter(status='published', is_featured=True)
+            .select_related('author', 'category')
+            .order_by('-created_at')[:3]
+        )
+
+        # Recent non-featured posts — up to 6, newest first
+        context['recent_posts'] = (
+            Post.objects.filter(status='published', is_featured=False)
+            .select_related('author', 'category')
+            .order_by('-created_at')[:6]
+        )
+
+        return context
 
 
 class PostListView(ListView):
