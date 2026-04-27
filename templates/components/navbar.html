@@ -1,10 +1,11 @@
 <nav class="fixed top-0 z-50 w-full bg-zinc-950/80 backdrop-blur-2xl border-b border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.36)]">
 <div class="flex justify-between items-center px-8 py-5 w-full max-w-7xl mx-auto font-sans tracking-tight antialiased">
-<a href="{% url 'blog:home' %}" class="text-2xl font-black tracking-tighter text-white uppercase">Draft<span class="text-primary">ly</span></a>
+<a href="{% url 'blog:home' %}" class="text-2xl font-black tracking-tighter text-white uppercase">⚡ Write<span class="text-primary">spark</span></a>
 
 <!-- Desktop Nav -->
 <div class="hidden md:flex items-center gap-8">
     <a class="text-zinc-400 font-medium hover:text-white hover:scale-105 transition-all duration-300 ease-[spring(300,20)]" href="{% url 'blog:post_list' %}">Browse</a>
+    <a class="text-zinc-400 font-medium hover:text-white hover:scale-105 transition-all duration-300 ease-[spring(300,20)]" href="{% url 'blog:writers' %}">Writers</a>
     {% if user.is_authenticated %}
         <a class="text-zinc-400 font-medium hover:text-white hover:scale-105 transition-all duration-300 ease-[spring(300,20)]" href="{% url 'blog:dashboard' %}">Dashboard</a>
     {% endif %}
@@ -23,9 +24,12 @@
             {% csrf_token %}
             <button type="submit" class="text-zinc-400 hover:text-white transition-colors text-sm">Logout</button>
         </form>
-        <div class="w-10 h-10 rounded-full overflow-hidden border border-white/20">
-            <div class="w-full h-full bg-surface-container-highest flex items-center justify-center text-sm text-on-surface-variant">
-                {{ user.username|slice:":1"|upper }}
+        <div class="flex items-center gap-3">
+            <span class="text-sm text-zinc-400">{{ user.username }}</span>
+            <div class="w-10 h-10 rounded-full overflow-hidden border border-white/20">
+                <div class="w-full h-full bg-surface-container-highest flex items-center justify-center text-sm text-on-surface-variant">
+                    {{ user.username|slice:":1"|upper }}
+                </div>
             </div>
         </div>
     {% else %}
@@ -50,6 +54,7 @@
         </div>
     </form>
     <a class="block text-zinc-400 font-medium hover:text-white transition-colors py-2" href="{% url 'blog:post_list' %}">Browse</a>
+    <a class="block text-zinc-400 font-medium hover:text-white transition-colors py-2" href="{% url 'blog:writers' %}">Writers</a>
     {% if user.is_authenticated %}
         <a class="block text-zinc-400 font-medium hover:text-white transition-colors py-2" href="{% url 'blog:dashboard' %}">Dashboard</a>
         <a class="block text-zinc-400 font-medium hover:text-white transition-colors py-2" href="{% url 'blog:post_create' %}">Write</a>

@@ -6,9 +6,9 @@ from django.utils.text import slugify
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    slug = models.SlugField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True, db_index=True)
     description = models.TextField(blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
 
     class Meta:
         verbose_name_plural = "Categories"
@@ -33,13 +33,13 @@ class Post(models.Model):
     )
 
     title = models.CharField(max_length=200)
-    slug = models.SlugField(unique=True, blank=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blog_posts')
+    slug = models.SlugField(max_length=200, unique=True, blank=True, db_index=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blog_posts', db_index=True)
     content = models.TextField()
     image = models.ImageField(upload_to='posts/', blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft', db_index=True)
 
     # New fields
     subtitle = models.CharField(max_length=300, blank=True)
@@ -47,9 +47,10 @@ class Post(models.Model):
         Category,
         on_delete=models.SET_NULL,
         null=True, blank=True,
-        related_name='posts'
+        related_name='posts',
+        db_index=True
     )
-    is_featured = models.BooleanField(default=False)
+    is_featured = models.BooleanField(default=False, db_index=True)
     read_time = models.PositiveIntegerField(
         null=True, blank=True,
         help_text="Auto-calculated or manual override in minutes"
@@ -61,6 +62,12 @@ class Post(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['status', '-created_at']),
+            models.Index(fields=['author', '-created_at']),
+            models.Index(fields=['category', '-created_at']),
+            models.Index(fields=['is_featured', '-created_at']),
+        ]
 
     def __str__(self):
         return self.title
@@ -84,7 +91,7 @@ class Post(models.Model):
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, db_index=True)
     avatar = models.ImageField(upload_to='avatars/', blank=True)
     role = models.CharField(
         max_length=100, blank=True,
@@ -97,10 +104,10 @@ class UserProfile(models.Model):
 
 
 class Comment(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments', db_index=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, db_index=True)
     content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
 
     # New fields
     likes = models.PositiveIntegerField(default=0)
@@ -111,6 +118,9 @@ class Comment(models.Model):
 
     class Meta:
         ordering = ['created_at']
+        indexes = [
+            models.Index(fields=['post', '-created_at']),
+        ]
 
     def __str__(self):
         return f"Comment by {self.user.username} on {self.post.title}"

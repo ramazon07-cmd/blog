@@ -6,6 +6,6 @@ body {
 
 .reading-progress {
     height: 2px;
-    background: linear-gradient(90deg, #8083ff, #4edea3);
+    background: linear-gradient(90deg, #F5A623, #4ECDC4);
     width: 35%;
 }

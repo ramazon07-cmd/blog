@@ -8,7 +8,9 @@ from django.contrib.auth.decorators import login_required
 from django_ratelimit.decorators import ratelimit
 from django.contrib import messages
 from django.urls import reverse_lazy
-from django.db.models import Q
+from itertools import chain
+from django.db.models import Q, Count
+from django.contrib.auth.models import User
 from .models import Post, Comment, Category
 from .forms import PostCreateForm, PostUpdateForm
 
@@ -20,8 +22,26 @@ class HomeView(ListView):
     paginate_by = None
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        return queryset.filter(status='published').select_related('author', 'category')
+        return Post.objects.none()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Featured posts — up to 3, newest first
+        context['featured_posts'] = (
+            Post.objects.filter(status='published', is_featured=True)
+            .select_related('author', 'category')
+            .order_by('-created_at')[:3]
+        )
+
+        # Recent non-featured posts — up to 6, newest first
+        context['recent_posts'] = (
+            Post.objects.filter(status='published', is_featured=False)
+            .select_related('author', 'category')
+            .order_by('-created_at')[:6]
+        )
+
+        return context
 
 
 class PostListView(ListView):
@@ -117,6 +137,26 @@ class UserDashboardView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['drafts_count'] = Post.objects.filter(author=self.request.user, status='draft').count()
         context['published_count'] = Post.objects.filter(author=self.request.user, status='published').count()
+        return context
+
+
+class WritersView(ListView):
+    model = Post
+    template_name = 'blog/writers.html'
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        return Post.objects.filter(
+            status='published'
+        ).select_related('author', 'category')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['writers'] = User.objects.filter(
+            blog_posts__status='published'
+        ).annotate(
+            post_count=Count('blog_posts')
+        ).order_by('-post_count')
         return context
 
 

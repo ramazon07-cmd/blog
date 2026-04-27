@@ -1,10 +1,10 @@
 /* Authentication page specific styles */
 
 body {
-    background-color: #0b1326;
+    background-color: #0D0D0F;
     background-image:
-        radial-gradient(at 0% 0%, rgba(73, 75, 214, 0.15) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(78, 222, 163, 0.1) 0px, transparent 50%);
+        radial-gradient(at 0% 0%, rgba(245, 166, 35, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(255, 107, 53, 0.1) 0px, transparent 50%);
     position: relative;
 }
 
@@ -22,10 +22,15 @@ body::after {
 }
 
 .glass-card {
-    background: rgba(23, 31, 51, 0.4);
+    background: rgba(20, 20, 24, 0.4);
     backdrop-filter: blur(40px);
+    border: 1px solid rgba(42, 42, 50, 0.8);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.36);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+}
+
+.spring-btn {
+    background: linear-gradient(135deg, #F5A623, #FF6B35);
 }
 
 .spring-btn:active {
@@ -34,6 +39,6 @@ body::after {
 }
 
 .input-focus-glow:focus {
-    box-shadow: 0 0 15px rgba(192, 193, 255, 0.2);
+    box-shadow: 0 0 0 2px #F5A623, 0 0 20px rgba(245, 166, 35, 0.15);
     outline: none;
 }

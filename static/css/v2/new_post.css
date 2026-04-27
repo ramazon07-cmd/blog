@@ -14,9 +14,9 @@
 }
 
 .glass-panel {
-    background: rgba(19, 27, 46, 0.7);
+    background: rgba(20, 20, 24, 0.7);
     backdrop-filter: blur(20px);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid #2A2A32;
 }
 
 .editor-container::-webkit-scrollbar {
@@ -24,6 +24,6 @@
 }
 
 .editor-container::-webkit-scrollbar-thumb {
-    background: rgba(192, 193, 255, 0.2);
+    background: rgba(245, 166, 35, 0.2);
     border-radius: 10px;
 }
