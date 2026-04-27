@@ -1,23 +1,30 @@
-# Draftly
+# Writespark
 
-A lightweight, custom blog platform built for simplicity and speed.
+A lightweight blog platform built for writers and content creators.
 
 ## Problem
 
-Writing and publishing blog content is painful without the right platform. Existing solutions are either bloated with features you don't need, locked into proprietary ecosystems, or require significant configuration before you can write a single word.
+Writing and publishing content shouldn't require navigating complex CMS interfaces or wrestling with bloated platforms. Creators need a focused space where the writing experience comes first.
 
 ## Solution
 
-Draftly is a minimal, custom blog platform designed around the writing experience. Built with Django, it strips away the complexity and delivers a clean, fast interface where content is the focus.
+Writespark is a minimal blog platform designed around the writing experience. Built with Django, it delivers a clean, fast interface where content is the focus — no bloat, no page builders slowing you down.
 
 ## Features
 
 - **Full CRUD for Posts** — Create, read, update, and delete articles with a streamlined editor
 - **Authentication System** — Register, login, and logout with secure session management
-- **Image Upload** — Add cover images to posts with full media pipeline support
+- **Author Dashboard** — Personal dashboard showing drafts and published post counts
+- **Featured Posts** — Highlight important articles with is_featured flag
+- **Category System** — Organize posts by topic with slug-based category pages
 - **Slug-Based URLs** — Clean, readable URLs for every post (e.g., `/post/my-post-title`)
-- **Search** — Find posts by title or content via keyword search
-- **Comments** — Readers can engage with posts through comments (rate-limited to prevent spam)
+- **Auto-calculated Read Time** — Posts display estimated reading time (200 wpm)
+- **Tags** — Comma-separated tags for post organization
+- **Search** — Find posts by title, subtitle, or content via keyword search
+- **Reader Comments** — Engage with readers through comments (rate-limited at 5/min)
+- **Nested Replies** — Comment threads with parent-child relationships
+- **Comment Likes** — Readers can like comments
+- **Writers Directory** — Browse all published writers and their post counts
 - **Responsive Design** — Dark theme UI optimized for reading and writing on any device
 
 ## Tech Stack
@@ -25,7 +32,7 @@ Draftly is a minimal, custom blog platform designed around the writing experienc
 | Layer | Technology |
 |-------|------------|
 | Framework | Django 5.2 |
-| Database | SQLite |
+| Database | SQLite (local) / Neon PostgreSQL (production via DATABASE_URL) |
 | Auth | Django's built-in authentication |
 | Media Storage | Django media files (local) |
 | Frontend | HTML + Tailwind CSS |
@@ -37,7 +44,7 @@ Draftly is a minimal, custom blog platform designed around the writing experienc
 
 ```bash
 # Clone and enter directory
-cd draftly
+cd writespark
 
 # Create virtual environment
 python -m venv venv
@@ -61,23 +68,73 @@ Visit `http://localhost:8000` to start.
 ## Project Structure
 
 ```
-draftly/
+writespark/
 ├── blog/                  # Main application
-│   ├── models.py         # Post and Comment models
-│   ├── views.py          # CBVs for CRUD + comment handler
-│   ├── forms.py          # Post creation/editing forms
-│   └── urls.py           # App routing
-├── blog_project/         # Django project config
-│   ├── settings.py       # Settings (DEBUG, ALLOWED_HOSTS, etc.)
-│   └── urls.py           # Root URL configuration
-├── templates/            # Global templates
-│   ├── base.html         # Base layout with Tailwind dark theme
-│   ├── blog/             # Post-related templates
-│   └── registration/     # Auth templates
-├── static/               # CSS, JS, and static assets
-├── media/                # User-uploaded images
+│   ├── models.py          # Post, Comment, Category, UserProfile models
+│   ├── views.py           # CBVs for CRUD + specialized views
+│   ├── forms.py           # PostCreateForm, PostUpdateForm
+│   ├── urls.py            # App routing (namespace: blog)
+│   ├── admin.py           # Custom admin configuration
+│   └── templatetags/      # Custom template filters
+├── blog_project/          # Django project config
+│   ├── settings.py        # Settings (DEBUG, ALLOWED_HOSTS, DB, etc.)
+│   └── urls.py            # Root URL configuration
+├── templates/             # Global templates
+│   ├── base.html          # Base layout with Tailwind dark theme
+│   ├── blog/              # Post-related templates
+│   ├── components/        # Reusable components (navbar, footer)
+│   └── registration/      # Auth templates
+├── static/                # CSS, JS, and static assets
+├── media/                 # User-uploaded images
 └── manage.py             # Django CLI
 ```
+
+## Core Models
+
+### Post
+- title, subtitle, content, slug (auto-generated)
+- author (ForeignKey to User)
+- category (ForeignKey to Category, optional)
+- image (optional cover image)
+- is_featured (boolean)
+- read_time (auto-calculated from word count)
+- tags (comma-separated string)
+- status (draft/published)
+- created_at, updated_at (auto timestamps)
+
+### Category
+- name, slug (auto-generated)
+- description (optional)
+- created_at (auto timestamp)
+
+### Comment
+- post (ForeignKey to Post)
+- user (ForeignKey to User)
+- content
+- parent (self-referential ForeignKey for replies)
+- likes (counter)
+- created_at (auto timestamp)
+
+### UserProfile
+- user (OneToOne to User)
+- avatar, role, bio
+
+## URL Routes
+
+| URL | View | Purpose |
+|-----|------|---------|
+| `/` | HomeView | Featured + recent posts |
+| `/posts/` | PostListView | All published posts (paginated) |
+| `/writers/` | WritersView | Writers directory |
+| `/dashboard/` | UserDashboardView | Author's post management |
+| `/post/new/` | PostCreateView | Create new post |
+| `/post/<slug>/` | PostDetailView | Single post view |
+| `/post/<slug>/edit/` | PostUpdateView | Edit existing post |
+| `/post/<slug>/delete/` | PostDeleteView | Delete post |
+| `/post/<slug>/comment/` | add_comment | Add comment (rate-limited) |
+| `/category/<slug>/` | CategoryPostsView | Posts by category |
+| `/search/` | SearchView | Search posts |
+| `/register/` | RegisterView | User registration |
 
 ## Environment Variables
 
@@ -86,5 +143,6 @@ draftly/
 | `DEBUG` | `False` | Enable debug mode |
 | `DJANGO_SECRET_KEY` | (insecure default) | Django secret key |
 | `ALLOWED_HOSTS` | `localhost,127.0.0.1` | Allowed HTTP hosts |
+| `DATABASE_URL` | (not set) | Neon PostgreSQL connection string |
 
 > **Note:** Set `DJANGO_SECRET_KEY` to a secure random value before deploying.
